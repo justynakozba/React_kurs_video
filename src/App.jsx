@@ -37,7 +37,30 @@ class App extends Component {
     }
 
     handleSaveEvent() {
-        this.setState(prevState =>({
+        this.setState(prevState => {
+            const editedEventExist = prevState.events.find(
+                el => el.id ===prevState.editedEvents.id
+        );
+
+        let updatedEvents;
+        if (editedEventExist) {
+            updatedEvents = prevState.events.map(el => {
+               if (el.id === prevState.editedEvents.id) return prevState.editedEvents;
+               else return el;
+            });
+        }
+        else {
+            updatedEvents = [...prevState.events, prevState.editedEvents]
+        }
+
+        return {
+            events: updatedEvents,
+            editedEvents:{id: uniqid(), name: "", hour: "", minute: ""}
+        };
+    });
+
+
+        /*this.setState(prevState =>({
             events: [...prevState.events, prevState.editedEvents],
             editedEvents: {
                 id:uniqid(),
@@ -45,7 +68,7 @@ class App extends Component {
                 hour:"",
                 minute:""
             }
-        }));
+        }));*/
     }
 
     handleRemoveEvent(id) {
@@ -56,7 +79,7 @@ class App extends Component {
 
     handleEditInit(id) {
         this.setState(prevState => ({
-            editedEvents: {...prevState.events.find(el => el.id == id)} // object spread - stworzenie nie referencji do obiektu a tworzenie nowego obiektu
+            editedEvents: {...prevState.events.find(el => el.id === id)} // object spread - stworzenie nie referencji do obiektu a tworzenie nowego obiektu
         }));
     }
 
