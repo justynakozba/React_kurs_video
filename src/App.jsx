@@ -25,6 +25,7 @@ class App extends Component {
         this.handleEditEvent = this.handleEditEvent.bind(this);
         this.handleSaveEvent = this.handleSaveEvent.bind(this);
         this.handleRemoveEvent = this.handleRemoveEvent.bind(this);
+        this.handleEditInit = this.handleEditInit.bind(this);
     }
 
     handleEditEvent(val) {
@@ -35,7 +36,7 @@ class App extends Component {
         });
     }
 
-    handleSaveEvent(){
+    handleSaveEvent() {
         this.setState(prevState =>({
             events: [...prevState.events, prevState.editedEvents],
             editedEvents: {
@@ -47,12 +48,19 @@ class App extends Component {
         }));
     }
 
-    handleRemoveEvent(id){
+    handleRemoveEvent(id) {
         this.setState(prevState => ({
             events: prevState.events.filter(el => el.id !== id)
         }) )
-
     }
+
+    handleEditInit(id) {
+        this.setState(prevState => ({
+            editedEvents: {...prevState.events.find(el => el.id == id)} // object spread - stworzenie nie referencji do obiektu a tworzenie nowego obiektu
+        }));
+    }
+
+
     render() {
         const events = this.state.events.map(el => {
             return <Countdown
@@ -62,6 +70,7 @@ class App extends Component {
             hour={el.hour}
             minute={el.minute}
             onRemove={id => this.handleRemoveEvent(id)}
+            onEditInit={id => this.handleEditInit(id)}
             />;
         })
         return (

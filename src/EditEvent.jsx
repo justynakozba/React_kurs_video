@@ -1,4 +1,5 @@
 import React from "react";
+import { isValidNumberInput } from "./utils";
 
 const EditEvent = props => {
     return(
@@ -21,6 +22,7 @@ const EditEvent = props => {
                     id="hour"
                     name="hour"
                     value={props.hour}
+                    onKeyPress={e => isValidNumberInput(e)}
                     onChange={e =>
                         props.onInputChange({[e.target.name]: e.target.value})}
                     />
@@ -31,6 +33,7 @@ const EditEvent = props => {
                     type="tel"
                     id="minute"
                     name="minute"
+                    onKeyPress={e => isValidNumberInput(e)}
                     value={props.minute}
                     onChange={e =>
                         props.onInputChange({[e.target.name]: e.target.value})}
