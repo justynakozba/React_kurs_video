@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { hourMinuteToSecond, secondsToHourMinuteSecond} from "./utils";
-
+import Overlay from "./Overlay";
 import "./Countdown.css";
 import "./../node_modules/semantic-ui-css/semantic.css";
 
@@ -19,6 +19,12 @@ const Countdown = props => {
             <i className = "icon edit" onClick={() => props.onEditInit(props.id)}/>
            <i className= "icon times" onClick={() => props.onRemove(props.id)} />
         </div>
+        <Overlay>
+            <h1>{props.name}</h1>
+            <p>
+                {props.hour.toString().padStart(2, 0)}:{props.minute.toString().padStart(2, 0)}
+            </p>
+        </Overlay>
     </div>
  );
 };
