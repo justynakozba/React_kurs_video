@@ -1,10 +1,12 @@
 #root,
-.app{
-    height: 100%;
+.app {
+  height: 100%;
 }
 
-.app{
-    background: #3181f2;
-    max-width: 500px;
-    margin:0 auto;
+.app {
+  background: #c6d9f3;
+  width: auto;
+  margin: 0 auto;
+  order: -1;
+  flex-wrap: wrap;
 }

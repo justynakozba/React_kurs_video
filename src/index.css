@@ -1,5 +1,5 @@
 html,
-body{
+body {
   height: 100%;
 }
 body {
@@ -12,7 +12,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.header {
+  background-image: url(images/image2.jpg);
+  background-repeat: no-repeat, repeat;
+  background-color: #cccccc;
+  color: white;
+  text-align: center;
+
+  width: auto;
+  margin: auto;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.container {
+  display: flex;
 }

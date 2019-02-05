@@ -1,79 +1,62 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "./EditEvent.css";
-import { isValidNumberInput, parseInputAsNumber, isValidName, isValidHour, isValidMinute} from "./utils";
-
+import { isValidString } from "./utils";
 
 const EditEvent = props => {
+  const isFormValid =
+    isValidString(props.name) && isValidString(props.deadline);
+  const isFormEmpty = props.content === "" && props.deadline === "";
 
-    const isFormValid =
-        isValidName(props.name) &&
-        isValidHour(props.hour) &&
-        isValidMinute(props.minute);
-
-    const isFormEmpty =
-    props.name === "" && props.hour === -1 && props.minute === -1;
-
-    return(
-        <div className="edit-event">
-            <div className="edit-event__input-group">
-                <label htmlFor="name">name</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={props.name}
-                    onChange={e =>
-                         props.onInputChange({[e.target.name]: e.target.value})}
-                    />
-                </div>
-            <div className="edit-event__input-group">
-                <label htmlFor="hour">hour</label>
-                <input
-                    type="tel"
-                    id="hour"
-                    name="hour"
-                    value={props.hour=== -1 ? "": props.hour}
-                    onKeyPress={e => isValidNumberInput(e)}
-                    onChange={e =>
-                        props.onInputChange({
-                            [e.target.name]: parseInputAsNumber(e.target.value)
-                        })}
-                    />
-            </div>
-            <div className="edit-event__input-group">
-                <label htmlFor="minute">minute</label>
-                <input
-                    type="tel"
-                    id="minute"
-                    name="minute"
-                    onKeyPress={e => isValidNumberInput(e)}
-                    value={props.minute=== -1 ? "": props.minute}
-                    onChange={e =>
-                        props.onInputChange({
-                            [e.target.name]: parseInputAsNumber(e.target.value)
-                        })}
-                    />
-            </div>
-            {/*
-            form ok -isFormValid true
-            form nie ok - isFormValid false
-
-            guzik odblokowany - false
-            guzik zablokowany -true
-            */}
-            <button disabled={!isFormValid} onClick={()=> props.onSave()}>OK</button>
-            <button disabled={isFormEmpty} onClick={()=>props.onCancel()}>Cancel</button>
+  return (
+    <div className="header">
+      <div className="edit-event">
+        <h1>This is my ToDoList </h1>
+        <div className="edit-event__input-group">
+          <input
+            type="text"
+            id="content"
+            name="content"
+            value={props.content}
+            onChange={e =>
+              props.onInputChange({ [e.target.name]: e.target.value })
+            }
+            placeholder="Add task..."
+          />
+          <label htmlFor="content" />
         </div>
-    )
-}
+        <div className="edit-event__input-group">
+          <input
+            type="date"
+            placeholder="icon-data"
+            id="deadline"
+            name="deadline"
+            value={props.deadline}
+            onKeyPress={e => isValidString(e)}
+            onChange={e =>
+              props.onInputChange({ [e.target.name]: e.target.value })
+            }
+          />
+          <label htmlFor="deadline" />
+        </div>
+        <div>
+          <button disabled={!isFormValid} onClick={() => props.onSave()}>
+            Add
+          </button>
+          <button disabled={isFormEmpty} onClick={() => props.onCancel()}>
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 EditEvent.propTypes = {
-    name: PropTypes.string,
-    hour: PropTypes.number,
-    minute: PropTypes.number,
-    onInputChange: PropTypes.func,
-    onSave: PropTypes.func,
-    onCancel: PropTypes.func
-}
+  content: PropTypes.string,
+  deadline: PropTypes.string,
+  onInputChange: PropTypes.func,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func
+};
 export default EditEvent;
