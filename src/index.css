@@ -1,6 +1,7 @@
 html,
 body {
   height: 100%;
+  background-color: rgb(202, 238, 245);
 }
 body {
   margin: 0;
@@ -18,16 +19,8 @@ body {
   background-color: #cccccc;
   color: white;
   text-align: center;
-
+  max-width: 700px;
   width: auto;
   margin: auto;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
-.container {
-  display: flex;
+  border: 5px groove rgb(118, 217, 241);
 }

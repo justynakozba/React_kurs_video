@@ -3,15 +3,12 @@ import "./App.css";
 import Countdown from "./Countdown";
 import EditEvent from "./EditEvent";
 import axios from "axios";
-import { join } from "path";
 
 const url = "http://useo-notes.herokuapp.com/notes/";
 class App extends Component {
-  //constructor() {
-  //super();
   state = {
     now: {
-      deadline: new Date().getDate() //zmienic na currenttime
+      deadline: new Date().getDate()
     },
     totalPages: -1,
 
@@ -26,13 +23,6 @@ class App extends Component {
     }
   };
 
-  //this.handleEditEvent = this.handleEditEvent.bind(this);
-  //this.handleSaveEvent = this.handleSaveEvent.bind(this);
-  //this.handleRemoveEvent = this.handleRemoveEvent.bind(this);
-  //this.handleEditInit = this.handleEditInit.bind(this);
-  //this.handleEditCancel = this.handleEditCancel.bind(this);
-  //}
-
   componentDidMount() {
     axios.get(url).then(res => {
       this.setState({ totalPages: res.data.total_pages });
@@ -41,13 +31,10 @@ class App extends Component {
       for (let i = 1; i <= res.data.total_pages; i++) {
         axios.get(url + "?page=" + i).then(res => {
           res.data.notes.forEach(note => {
-            //this.state.notes.push(note);
             console.log("status : " + note.completed);
-            // Why I have to force change state here?
-            //this.setState({ state: this.state });
             array.push(note);
+            this.setState({ notes: array });
           });
-          this.setState({ notes: array });
         });
       }
     });
@@ -61,6 +48,7 @@ class App extends Component {
     });
   }
 
+  componentDidUpdate(pervProps, prevSate) {}
   addNoteToServer(taskName, deadline) {
     axios
       .post(url, {
@@ -75,22 +63,26 @@ class App extends Component {
       })
       .then(res => {
         console.log(
-          "Adding task - " + taskName + " with result" + res.statusText
+          "Adding task - " + taskName + " with result " + res.statusText
         );
       });
   }
 
-  updateCompletionOnServer(noteId, completion) {
+  updateCompletionOnServer(note) {
+    const noteId = note.id;
+    const completion = note.completed === true ? "completed" : "uncompleted";
+    console.log(completion);
     console.log("update on a server attempt" + url + noteId + "/" + completion);
     axios.put(url + noteId + "/" + completion).then(res => {
       console.log(
         "Changing completion for note: " +
           noteId +
-          "  end up with result" +
+          " end up with result " +
           res.statusText
       );
     });
   }
+
   handleSaveEvent() {
     this.setState(prevState => {
       const editedNoteExist = prevState.notes.find(
@@ -99,7 +91,7 @@ class App extends Component {
 
       let updatedNotes;
       if (editedNoteExist) {
-        updatedNotes = prevState.notes.map(nt => {
+        updatedNotes = prevState.notes.map((nt, index) => {
           if (nt.id === prevState.note.id) return prevState.note;
           else return nt;
         });
@@ -123,22 +115,19 @@ class App extends Component {
   }
 
   handleRemoveEvent(id) {
-    this.setState(
-      prevState => ({
-        notes: prevState.notes.filter(el => el.id !== id)
-      }),
-      () => localStorage.setItem("notes", JSON.stringify(this.state.notes))
-    );
+    this.setState(prevState => ({
+      notes: prevState.notes.filter(el => el.id !== id)
+    }));
     axios.delete(url + id).then(res => {
       console.log(
-        "remove event with id " + id + "with status " + res.statusText
+        "remove event with id " + id + " with status " + res.statusText
       );
     });
   }
 
   handleEditInit(id) {
     this.setState(prevState => ({
-      note: { ...prevState.notes.find(el => el.id === id) } // object spread - stworzenie nie referencji do obiektu a tworzenie nowego obiektu
+      note: { ...prevState.notes.find(el => el.id === id) } // object spread
     }));
   }
 
@@ -156,22 +145,33 @@ class App extends Component {
   }
 
   handleCheckedEvent(id) {
-    this.setState(prevState => {
+    const currentNotes = [...this.state.notes];
+    const clickedNote = currentNotes.find(el => el.id === id);
+    console.log(clickedNote);
+
+    const isCompleted = clickedNote.completed;
+    clickedNote.completed = !isCompleted;
+    this.setState({ notes: currentNotes });
+    this.updateCompletionOnServer(clickedNote);
+
+    /*this.setState(prevState => {
       prevState.notes.find(nt => {
         if (nt.id === id) {
           if (!nt.completed) {
             nt.completed = true;
             this.updateCompletionOnServer(nt.id, "completed");
-            console.log("ukonczono task " + nt.completed);
+            console.log("completed task " + nt.completed + " class name ");
           } else {
             nt.completed = false;
             this.updateCompletionOnServer(nt.id, "uncompleted");
-            console.log("nieukonczone task " + nt.completed);
+            console.log("uncompleted task " + nt.completed);
           }
         }
       });
     });
+    this.setState({ state: this.state });*/
   }
+
   render() {
     console.log("this is my render function !");
     const n = this.state.notes.map(nt => {
@@ -181,23 +181,23 @@ class App extends Component {
           id={nt.id}
           content={nt.content}
           deadline={nt.deadline}
+          completion={nt.completed}
           onRemove={id => this.handleRemoveEvent(id)}
           onEditInit={id => this.handleEditInit(id)}
           onChecked={id => this.handleCheckedEvent(id)}
         />
       );
     });
-
     return (
       <div className="app">
-        {n}
         <EditEvent
           content={this.state.note.content}
           deadline={this.state.note.deadline}
           onInputChange={val => this.handleEditEvent(val)}
-          onSave={() => this.handleSaveEvent()}
-          onCancel={() => this.handleEditCancel()}
+          onSave={this.handleSaveEvent}
+          onCancel={id => this.handleEditCancel(id)}
         />
+        {n}
       </div>
     );
   }
